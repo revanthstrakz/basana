@@ -119,7 +119,7 @@ async def main(params: Optional[List[str]] = None, config_overrides: dict = {}):
         eof = False
         currency_pair = to_binance_currency_pair(args.currency_pair)
         while not eof:
-            response = await cli.get_candlestick_data(
+            response = await cli.get_futures_candlestick_data(
                 currency_pair, args.period, start_time=start_ts, end_time=past_the_end_ts, limit=1000
             )
             eof = True
