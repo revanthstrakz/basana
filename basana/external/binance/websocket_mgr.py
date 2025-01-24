@@ -86,6 +86,22 @@ class WebsocketManager:
             cast(dispatcher.EventHandler, event_handler)
         )
 
+    def subscribe_to_futures_trade_events(self, pair: Pair, event_handler: trades.TradeEventHandler):
+        self._subscribe_to_ws_channel_events(
+            binance_ws.PublicChannel(trades.get_futures_trade_channel(pair)),
+            lambda ws_cli: trades.FuturesTradeWebSocketEventSource(pair, ws_cli),
+            cast(dispatcher.EventHandler, event_handler)
+        )
+
+    def subscribe_to_futures_order_book_events(
+            self, pair: Pair, event_handler: order_book.OrderBookEventHandler, depth: int = 10
+    ):
+        self._subscribe_to_ws_channel_events(
+            binance_ws.PublicChannel(order_book.get_futures_order_book_channel(pair, depth)),
+            lambda ws_cli: order_book.FuturesOrderBookWebSocketEventSource(pair, ws_cli),
+            cast(dispatcher.EventHandler, event_handler)
+        )
+
     def _subscribe_to_ws_channel_events(
             self, channel: binance_ws.Channel,
             event_src_factory: Callable[[core_ws.WebSocketClient], core_ws.ChannelEventSource],

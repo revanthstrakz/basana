@@ -112,3 +112,33 @@ def futures_side_to_order_operation(side: str) -> OrderOperation:
         "BUY": OrderOperation.BUY,
         "SELL": OrderOperation.SELL,
     }[side]
+
+
+def handle_futures_trade_event(event: dict) -> dict:
+    assert event["e"] == "trade"
+    return {
+        "event_type": event["e"],
+        "event_time": timestamp_to_datetime(event["E"]),
+        "symbol": event["s"],
+        "trade_id": event["t"],
+        "price": Decimal(event["p"]),
+        "quantity": Decimal(event["q"]),
+        "buyer_order_id": event["b"],
+        "seller_order_id": event["a"],
+        "trade_time": timestamp_to_datetime(event["T"]),
+        "is_buyer_maker": event["m"],
+        "ignore": event["M"],
+    }
+
+
+def handle_futures_order_book_event(event: dict) -> dict:
+    assert event["e"] == "depthUpdate"
+    return {
+        "event_type": event["e"],
+        "event_time": timestamp_to_datetime(event["E"]),
+        "symbol": event["s"],
+        "first_update_id": event["U"],
+        "final_update_id": event["u"],
+        "bids": [(Decimal(bid[0]), Decimal(bid[1])) for bid in event["b"]],
+        "asks": [(Decimal(ask[0]), Decimal(ask[1])) for ask in event["a"]],
+    }
