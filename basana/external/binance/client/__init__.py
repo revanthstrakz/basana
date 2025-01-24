@@ -77,3 +77,18 @@ class APIClient:
             ("limit", limit),
         ))
         return await self._client.make_request("GET", "/api/v3/klines", qs_params=params)
+
+    async def get_futures_candlestick_data(
+            self, symbol: str, interval: str, start_time: Optional[int] = None, end_time: Optional[int] = None,
+            limit: Optional[int] = None
+    ) -> list:
+        params: Dict[str, Any] = {
+            "symbol": symbol,
+            "interval": interval,
+        }
+        base.set_optional_params(params, (
+            ("startTime", start_time),
+            ("endTime", end_time),
+            ("limit", limit),
+        ))
+        return await self._client.make_futures_request("GET", "/fapi/v1/klines", qs_params=params)

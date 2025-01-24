@@ -18,6 +18,7 @@ DEFAULTS = {
     "api": {
         "http": {
             "base_url": "https://api.binance.com/",
+            "futures_base_url": "https://fapi.binance.com/",
             "timeout": 30,
         },
         "websockets": {
