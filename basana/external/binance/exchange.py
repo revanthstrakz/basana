@@ -265,12 +265,27 @@ class Exchange:
 
         self._ws_mgr.subscribe_to_futures_bar_events(pair, interval, event_handler)
 
+    def subscribe_to_futures_trade_events(self, pair: Pair, event_handler: TradeEventHandler):
+        """
+        Registers an async callable that will be called for every new futures trade.
 
-def get_filter_from_symbol_info(symbol_info: dict, filter_type: str) -> Optional[dict]:
-    filters = symbol_info["filters"]
-    price_filters = [filter for filter in filters if filter["filterType"] == filter_type]
-    return None if not price_filters else price_filters[0]
+        Works as defined in https://binance-docs.github.io/apidocs/futures/en/#trade-streams.
 
+        :param pair: The trading pair.
+        :param event_handler: An async callable that receives a TradeEvent.
+        """
+        self._ws_mgr.subscribe_to_trade_events(pair, event_handler)
 
-def get_precision_from_step_size(step_size: str) -> int:
-    return int(-Decimal(step_size).log10() / Decimal(10).log10())
+    def subscribe_to_futures_order_book_events(
+            self, pair: Pair, event_handler: OrderBookEventHandler, depth: int = 10
+    ):
+        """
+        Registers an async callable that will be called every 1 second with the top bids/asks of the futures order book.
+
+        Works as defined in https://binance-docs.github.io/apidocs/futures/en/#partial-book-depth-streams.
+
+        :param pair: The trading pair.
+        :param event_handler: An async callable that receives an OrderBookEvent.
+        :param depth: The order book depth. Valid values are: 5, 10, 20.
+        """
+        self._ws_mgr.subscribe_to_order_book_events(pair, event_handler, depth=depth)

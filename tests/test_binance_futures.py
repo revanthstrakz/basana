@@ -98,3 +98,32 @@ def test_download_futures_market_data(binance_client):
     assert isinstance(first_candle[3], str)  # Low price
     assert isinstance(first_candle[4], str)  # Close price
     assert isinstance(first_candle[5], str)  # Volume
+
+def test_download_futures_trades(binance_exchange):
+    futures_account = binance_exchange.futures_account
+    trades = futures_account.download_trades(symbol="BTCUSDT", start_time=1609459200000, end_time=1609545600000)
+    assert trades is not None
+    assert isinstance(trades, list)
+    assert len(trades) > 0
+
+def test_subscribe_to_futures_trade_events(binance_exchange):
+    pair = Pair("BTC", "USDT")
+    event_handler_called = False
+
+    async def event_handler(event):
+        nonlocal event_handler_called
+        event_handler_called = True
+
+    binance_exchange.subscribe_to_futures_trade_events(pair, event_handler)
+    assert event_handler_called
+
+def test_subscribe_to_futures_order_book_events(binance_exchange):
+    pair = Pair("BTC", "USDT")
+    event_handler_called = False
+
+    async def event_handler(event):
+        nonlocal event_handler_called
+        event_handler_called = True
+
+    binance_exchange.subscribe_to_futures_order_book_events(pair, event_handler)
+    assert event_handler_called

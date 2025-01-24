@@ -164,3 +164,28 @@ class FuturesAccount:
         if order_id is not None:
             params["orderId"] = order_id
         return await self._client.make_request("GET", "/fapi/v1/userTrades", qs_params=params, send_sig=True)
+
+    async def download_trades(self, symbol: str, start_time: Optional[int] = None, end_time: Optional[int] = None) -> List[dict]:
+        params: Dict[str, Any] = {
+            "symbol": symbol,
+        }
+        base.set_optional_params(params, (
+            ("startTime", start_time),
+            ("endTime", end_time),
+        ))
+        return await self._client.make_request("GET", "/fapi/v1/historicalTrades", qs_params=params, send_sig=True)
+
+    async def download_market_data(
+            self, symbol: str, interval: str, start_time: Optional[int] = None, end_time: Optional[int] = None,
+            limit: Optional[int] = None
+    ) -> list:
+        params: Dict[str, Any] = {
+            "symbol": symbol,
+            "interval": interval,
+        }
+        base.set_optional_params(params, (
+            ("startTime", start_time),
+            ("endTime", end_time),
+            ("limit", limit),
+        ))
+        return await self._client.make_request("GET", "/fapi/v1/klines", qs_params=params)
