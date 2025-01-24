@@ -72,3 +72,29 @@ def test_get_futures_trades(binance_exchange):
     trades = futures_account.get_trades(symbol="BTCUSDT")
     assert trades is not None
     assert isinstance(trades, list)
+
+def test_download_futures_market_data(binance_client):
+    symbol = "BTCUSDT"
+    interval = "1d"
+    start_time = 1609459200000  # 2021-01-01 00:00:00
+    end_time = 1609545600000    # 2021-01-02 00:00:00
+
+    market_data = binance_client.get_candlestick_data(
+        symbol=symbol,
+        interval=interval,
+        start_time=start_time,
+        end_time=end_time
+    )
+
+    assert market_data is not None
+    assert isinstance(market_data, list)
+    assert len(market_data) > 0
+
+    first_candle = market_data[0]
+    assert first_candle[0] == start_time
+    assert first_candle[6] == end_time - 1
+    assert isinstance(first_candle[1], str)  # Open price
+    assert isinstance(first_candle[2], str)  # High price
+    assert isinstance(first_candle[3], str)  # Low price
+    assert isinstance(first_candle[4], str)  # Close price
+    assert isinstance(first_candle[5], str)  # Volume
