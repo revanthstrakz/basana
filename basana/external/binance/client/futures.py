@@ -42,7 +42,7 @@ class FuturesAccount:
             ("newClientOrderId", new_client_order_id),
         ))
         params.update(kwargs)
-        return await self._client.make_request("POST", "/fapi/v1/order", data=params, send_sig=True)
+        return await self._client.make_futures_request("POST", "/fapi/v1/order", data=params, send_sig=True)
 
     async def query_order(
             self, symbol: str, order_id: Optional[int] = None, orig_client_order_id: Optional[str] = None
@@ -57,7 +57,7 @@ class FuturesAccount:
             ("orderId", order_id),
             ("origClientOrderId", orig_client_order_id),
         ))
-        return await self._client.make_request("GET", "/fapi/v1/order", qs_params=params, send_sig=True)
+        return await self._client.make_futures_request("GET", "/fapi/v1/order", qs_params=params, send_sig=True)
 
     async def get_open_orders(
             self, symbol: Optional[str] = None
@@ -65,7 +65,7 @@ class FuturesAccount:
         params: Dict[str, Any] = {}
         if symbol is not None:
             params["symbol"] = symbol
-        return await self._client.make_request("GET", "/fapi/v1/openOrders", qs_params=params, send_sig=True)
+        return await self._client.make_futures_request("GET", "/fapi/v1/openOrders", qs_params=params, send_sig=True)
 
     async def cancel_order(
             self, symbol: str, order_id: Optional[int] = None, orig_client_order_id: Optional[str] = None
@@ -80,7 +80,7 @@ class FuturesAccount:
             ("orderId", order_id),
             ("origClientOrderId", orig_client_order_id),
         ))
-        return await self._client.make_request("DELETE", "/fapi/v1/order", qs_params=params, send_sig=True)
+        return await self._client.make_futures_request("DELETE", "/fapi/v1/order", qs_params=params, send_sig=True)
 
     async def get_trades(self, symbol: str, order_id: Optional[int] = None) -> List[dict]:
         params: Dict[str, Any] = {
@@ -88,16 +88,16 @@ class FuturesAccount:
         }
         if order_id is not None:
             params["orderId"] = order_id
-        return await self._client.make_request("GET", "/fapi/v1/userTrades", qs_params=params, send_sig=True)
+        return await self._client.make_futures_request("GET", "/fapi/v1/userTrades", qs_params=params, send_sig=True)
 
     async def create_listen_key(self) -> dict:
-        return await self._client.make_request("POST", "/fapi/v1/listenKey", send_key=True)
+        return await self._client.make_futures_request("POST", "/fapi/v1/listenKey", send_key=True)
 
     async def keep_alive_listen_key(self, listen_key: str) -> dict:
         params: Dict[str, Any] = {
             "listenKey": listen_key,
         }
-        return await self._client.make_request("PUT", "/fapi/v1/listenKey", send_key=True, data=params)
+        return await self._client.make_futures_request("PUT", "/fapi/v1/listenKey", send_key=True, data=params)
 
     async def create_futures_order(
             self, symbol: str, side: str, type: str, time_in_force: Optional[str] = None,
@@ -117,7 +117,7 @@ class FuturesAccount:
             ("newClientOrderId", new_client_order_id),
         ))
         params.update(kwargs)
-        return await self._client.make_request("POST", "/fapi/v1/order", data=params, send_sig=True)
+        return await self._client.make_futures_request("POST", "/fapi/v1/order", data=params, send_sig=True)
 
     async def query_futures_order(
             self, symbol: str, order_id: Optional[int] = None, orig_client_order_id: Optional[str] = None
@@ -132,7 +132,7 @@ class FuturesAccount:
             ("orderId", order_id),
             ("origClientOrderId", orig_client_order_id),
         ))
-        return await self._client.make_request("GET", "/fapi/v1/order", qs_params=params, send_sig=True)
+        return await self._client.make_futures_request("GET", "/fapi/v1/order", qs_params=params, send_sig=True)
 
     async def cancel_futures_order(
             self, symbol: str, order_id: Optional[int] = None, orig_client_order_id: Optional[str] = None
@@ -147,7 +147,7 @@ class FuturesAccount:
             ("orderId", order_id),
             ("origClientOrderId", orig_client_order_id),
         ))
-        return await self._client.make_request("DELETE", "/fapi/v1/order", qs_params=params, send_sig=True)
+        return await self._client.make_futures_request("DELETE", "/fapi/v1/order", qs_params=params, send_sig=True)
 
     async def get_open_futures_orders(
             self, symbol: Optional[str] = None
@@ -155,7 +155,7 @@ class FuturesAccount:
         params: Dict[str, Any] = {}
         if symbol is not None:
             params["symbol"] = symbol
-        return await self._client.make_request("GET", "/fapi/v1/openOrders", qs_params=params, send_sig=True)
+        return await self._client.make_futures_request("GET", "/fapi/v1/openOrders", qs_params=params, send_sig=True)
 
     async def get_futures_trades(self, symbol: str, order_id: Optional[int] = None) -> List[dict]:
         params: Dict[str, Any] = {
@@ -163,4 +163,4 @@ class FuturesAccount:
         }
         if order_id is not None:
             params["orderId"] = order_id
-        return await self._client.make_request("GET", "/fapi/v1/userTrades", qs_params=params, send_sig=True)
+        return await self._client.make_futures_request("GET", "/fapi/v1/userTrades", qs_params=params, send_sig=True)

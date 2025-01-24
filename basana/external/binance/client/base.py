@@ -121,6 +121,50 @@ class BaseClient:
                     json_response = await resp.json()
                 raise_for_error(resp, json_response)
                 return json_response
+            
+    async def make_futures_request(
+            self, method: str, path: str, send_key: bool = False, send_sig: bool = False,
+            qs_params: Dict[str, Any] = {}, data: Dict[str, Any] = {}
+    ) -> Any:
+        if self._tb and (sleep_time := self._tb.consume()):
+            await asyncio.sleep(sleep_time)
+
+        async with core_helpers.use_or_create_session(session=self._session) as session:
+            headers = {}
+            session_method = {
+                "DELETE": session.delete,
+                "GET": session.get,
+                "POST": session.post,
+                "PUT": session.put,
+            }.get(method)
+            assert session_method is not None
+
+            base_url = get_config_value(config.DEFAULTS, "api.http.futures_base_url", overrides=self._config_overrides)
+            timeout = get_config_value(config.DEFAULTS, "api.http.timeout", overrides=self._config_overrides)
+            url = urljoin(base_url, path)
+
+            if send_key or send_sig:
+                assert self._api_key, "api_key not set"
+
+                headers["X-MBX-APIKEY"] = self._api_key
+
+            if send_sig:
+                assert self._api_secret, "api_secret not set"
+
+                qs_params = copy.copy(qs_params)
+                # Signature and timestamp should go in the query string, and the timestamp should be included in the
+                # signature.
+                qs_params["timestamp"] = int(round(time.time() * 1000))
+                qs_params["signature"] = helpers.get_signature(self._api_secret, qs_params=qs_params, data=data)
+
+            form_data = None if not data else aiohttp.FormData(data)
+            async with session_method(url, headers=headers, params=qs_params, data=form_data, timeout=timeout) as resp:
+                # print(await resp.text())
+                json_response = None
+                if (ct := resp.headers.get("Content-Type")) and ct.lower().find("application/json") == 0:
+                    json_response = await resp.json()
+                raise_for_error(resp, json_response)
+                return json_response
 
 
 def set_optional_params(params: Dict[str, Any], tuples: Sequence[Tuple[str, Any]]):
