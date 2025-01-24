@@ -18,7 +18,7 @@ from typing import Any, Dict, Optional
 
 import aiohttp
 
-from . import base, margin, spot
+from . import base, margin, spot, futures
 from basana.core import token_bucket
 
 
@@ -52,6 +52,10 @@ class APIClient:
     @property
     def isolated_margin_account(self) -> margin.IsolatedMarginAccount:
         return margin.IsolatedMarginAccount(self._client)
+
+    @property
+    def futures_account(self) -> futures.FuturesAccount:
+        return futures.FuturesAccount(self._client)
 
     async def get_order_book(self, symbol: str, limit: Optional[int] = None) -> dict:
         params: Dict[str, Any] = {"symbol": symbol}

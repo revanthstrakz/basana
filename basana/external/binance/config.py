@@ -38,6 +38,11 @@ DEFAULTS = {
                     "heartbeat": 15 * 60,
                 },
             },
+            "futures": {
+                "user_data_stream": {
+                    "heartbeat": 15 * 60,
+                },
+            },
         }
     }
 }
