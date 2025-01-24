@@ -93,3 +93,22 @@ def timestamp_to_datetime(timestamp: int) -> datetime.datetime:
 
 def datetime_to_timestamp(datetime: datetime.datetime) -> int:
     return int(dt.to_utc_timestamp(datetime) * 1e3)
+
+
+def futures_order_status_is_open(order_status: str) -> bool:
+    is_open = {
+        "NEW": True,
+        "PARTIALLY_FILLED": True,
+        "FILLED": False,
+        "CANCELED": False,
+        "EXPIRED": False,
+    }.get(order_status)
+    assert is_open is not None, "No mapping for {} order status".format(order_status)
+    return is_open
+
+
+def futures_side_to_order_operation(side: str) -> OrderOperation:
+    return {
+        "BUY": OrderOperation.BUY,
+        "SELL": OrderOperation.SELL,
+    }[side]

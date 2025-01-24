@@ -20,7 +20,7 @@ import dataclasses
 
 import aiohttp
 
-from . import client, helpers, order_book, trades, spot, cross_margin, isolated_margin, websocket_mgr
+from . import client, helpers, order_book, trades, spot, cross_margin, isolated_margin, websocket_mgr, futures
 from basana.core import bar, dispatcher, enums, token_bucket
 from basana.core.pair import Pair, PairInfo
 
@@ -209,6 +209,11 @@ class Exchange:
     def isolated_margin_account(self) -> isolated_margin.Account:
         """Returns the isolated margin account."""
         return isolated_margin.Account(self._cli.isolated_margin_account, self._ws_mgr)
+
+    @property
+    def futures_account(self) -> futures.FuturesAccount:
+        """Returns the futures account."""
+        return futures.FuturesAccount(self._cli.futures_account, self._ws_mgr)
 
 
 def get_filter_from_symbol_info(symbol_info: dict, filter_type: str) -> Optional[dict]:

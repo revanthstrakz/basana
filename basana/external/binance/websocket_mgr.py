@@ -79,6 +79,13 @@ class WebsocketManager:
             channel, event_src_factory, cast(dispatcher.EventHandler, forward_if_order_event)
         )
 
+    def subscribe_to_futures_bar_events(self, pair: Pair, interval: str, event_handler: bar.BarEventHandler):
+        self._subscribe_to_ws_channel_events(
+            binance_ws.PublicChannel(klines.get_futures_channel(pair, interval)),
+            lambda ws_cli: klines.FuturesWebSocketEventSource(pair, ws_cli),
+            cast(dispatcher.EventHandler, event_handler)
+        )
+
     def _subscribe_to_ws_channel_events(
             self, channel: binance_ws.Channel,
             event_src_factory: Callable[[core_ws.WebSocketClient], core_ws.ChannelEventSource],
