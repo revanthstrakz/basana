@@ -215,6 +215,56 @@ class Exchange:
         """Returns the futures account."""
         return futures.FuturesAccount(self._cli.futures_account, self._ws_mgr)
 
+    def subscribe_to_futures_bar_events(self, pair: Pair, bar_duration: Union[int, str], event_handler: BarEventHandler):
+        """
+        Registers an async callable that will be called when a new futures bar is available.
+
+        Works as defined in https://binance-docs.github.io/apidocs/futures/en/#kline-candlestick-streams but only closed
+        klines are reported.
+
+        :param pair: The trading pair.
+        :param bar_duration: The bar duration. One of 1s, 1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M.
+        :type bar_duration: str
+        :param event_handler: An async callable that receives a BarEvent.
+        """
+        interval = {
+            1: "1s",
+            60: "1m",
+            3 * 60: "3m",
+            5 * 60: "5m",
+            15 * 60: "15m",
+            30 * 60: "30m",
+            3600: "1h",
+            2 * 3600: "2h",
+            4 * 3600: "4h",
+            6 * 3600: "6h",
+            8 * 3600: "8h",
+            12 * 3600: "12h",
+            86400: "1d",
+            3 * 86400: "3d",
+            7 * 86400: "1w",
+            31 * 86400: "1M",
+            "1s": "1s",
+            "1m": "1m",
+            "3m": "3m",
+            "5m": "5m",
+            "15m": "15m",
+            "30m": "30m",
+            "1h": "1h",
+            "2h": "2h",
+            "4h": "4h",
+            "6h": "6h",
+            "8h": "8h",
+            "12h": "12h",
+            "1d": "1d",
+            "3d": "3d",
+            "1w": "1w",
+            "1M": "1M",
+        }.get(bar_duration)
+        assert interval, "Invalid bar_duration"
+
+        self._ws_mgr.subscribe_to_futures_bar_events(pair, interval, event_handler)
+
 
 def get_filter_from_symbol_info(symbol_info: dict, filter_type: str) -> Optional[dict]:
     filters = symbol_info["filters"]
